@@ -7,7 +7,6 @@ import os
 from pdf2image import convert_from_bytes
 import shutil
 
-# Debug information
 st.write(f"Python version: {sys.version}")
 st.write(f"spaCy version: {spacy.__version__}")
 st.write(f"pdf2image version: {pdf2image.__version__}")
