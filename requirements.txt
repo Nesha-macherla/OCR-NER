@@ -3,3 +3,4 @@ pdfplumber==0.11.2
 Pillow==10.4.0
 pytesseract==0.3.10
 spacy==3.7.5
+numpy==1.21.0
