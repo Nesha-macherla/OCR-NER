@@ -10,31 +10,31 @@ from PIL import Image
 import io
 
 # Debug information
-st.write(f"Python version: {sys.version}")
-st.write(f"Current working directory: {os.getcwd()}")
-st.write(f"Contents of current directory: {os.listdir()}")
+#st.write(f"Python version: {sys.version}")
+#st.write(f"Current working directory: {os.getcwd()}")
+#st.write(f"Contents of current directory: {os.listdir()}")
 
 # Try importing modules with error handling
 modules_to_import = ['pdf2image', 'pytesseract', 'PIL']
 for module in modules_to_import:
     try:
         exec(f"import {module}")
-        st.write(f"Successfully imported {module}")
+        #st.write(f"Successfully imported {module}")
         # Get version using pkg_resources
         try:
             version = pkg_resources.get_distribution(module).version
-            st.write(f"{module} version: {version}")
+            #st.write(f"{module} version: {version}")
         except pkg_resources.DistributionNotFound:
-            st.write(f"Could not determine version for {module}")
+            #st.write(f"Could not determine version for {module}")
     except ImportError as e:
-        st.error(f"Error importing {module}: {str(e)}")
+        #st.error(f"Error importing {module}: {str(e)}")
 
 # Check for poppler
 poppler_path = shutil.which('pdfinfo')
-st.write(f"Poppler path: {poppler_path}")
+#st.write(f"Poppler path: {poppler_path}")
 
 if poppler_path is None:
-    st.error("poppler-utils is not installed or not in PATH")
+    #st.error("poppler-utils is not installed or not in PATH")
 
 
 @st.cache_resource
