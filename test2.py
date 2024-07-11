@@ -20,6 +20,22 @@ st.write(f"Poppler path: {poppler_path}")
 
 if poppler_path is None:
     st.error("poppler-utils is not installed or not in PATH")
+# Function to extract text from PDF
+def extract_text_from_pdf(pdf_file):
+    text = ""
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            images = pdf2image.convert_from_bytes(pdf_file.read())
+            
+            for i, image in enumerate(images):
+                image_path = os.path.join(temp_dir, f'page_{i}.png')
+                image.save(image_path, 'PNG')
+                
+                text += pytesseract.image_to_string(Image.open(image_path))
+        return text
+    except Exception as e:
+        st.error(f"Error in PDF processing: {str(e)}")
+        return ""
 
 # Load the spaCy model
 @st.cache_resource
