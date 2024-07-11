@@ -5,3 +5,5 @@ pytesseract==0.3.10
 spacy==3.7.5
 numpy==1.21.0
 streamlit
+subprocess
+sys
