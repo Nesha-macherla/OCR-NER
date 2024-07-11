@@ -5,4 +5,3 @@ pytesseract
 spacy
 numpy
 streamlit
-sys
