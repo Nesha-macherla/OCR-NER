@@ -2,6 +2,7 @@ import streamlit as st
 import pytesseract
 import pdfplumber
 import spacy
+from spacy import en_core_web_sm
 
 # Function to extract text from PDF using pdfplumber
 def extract_text_from_pdf(pdf_path):
