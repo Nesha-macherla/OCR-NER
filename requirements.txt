@@ -5,7 +5,5 @@ pytesseract
 spaCy
 numpy
 streamlit
-transformers
-TensorFlow
-en_core_web_sm
-subprocess
+pdf2image
+
