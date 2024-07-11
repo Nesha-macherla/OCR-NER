@@ -3,6 +3,13 @@ import pytesseract
 import pdfplumber
 import spacy
 from spacy import en_core_web_sm
+import subprocess
+
+def download_en_core_web_sm():
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+
+if not spacy.util.get_data_path("en_core_web_sm"):
+    download_en_core_web_sm()
 
 # Function to extract text from PDF using pdfplumber
 def extract_text_from_pdf(pdf_path):
