@@ -24,7 +24,7 @@ for module in modules_to_import:
         try:
             version = pkg_resources.get_distribution(module).version
             #st.write(f"{module} version: {version}")
-        except pkg_resources.DistributionNotFound:
+        #except pkg_resources.DistributionNotFound:
             #st.write(f"Could not determine version for {module}")
     except ImportError as e:
         st.error(f"Error importing {module}: {str(e)}")
