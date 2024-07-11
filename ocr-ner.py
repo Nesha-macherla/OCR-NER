@@ -1,3 +1,7 @@
+pip install pytesseract
+pip install pdfplumber
+pip install spacy
+python -m spacy download en_core_web_sm
 import pytesseract
 import pdfplumber
 import spacy
