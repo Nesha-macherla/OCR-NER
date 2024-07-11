@@ -1,24 +1,26 @@
 import sys
 import streamlit as st
-import pytesseract
-from PIL import Image
 import spacy
-import tempfile
 import os
-from pdf2image import convert_from_bytes
 import shutil
-
 
 # Debug information
 st.write(f"Python version: {sys.version}")
-st.write(f"spaCy version: {spacy.__version__}")
-st.write(f"pdf2image version: {pdf2image.__version__}")
-st.write(f"Tesseract version: {pytesseract.get_tesseract_version()}")
-st.write("Imported modules:")
-st.write(f"pdf2image: {'pdf2image' in sys.modules}")
-st.write(f"pytesseract: {'pytesseract' in sys.modules}")
-st.write(f"spacy: {'spacy' in sys.modules}")
+st.write(f"Current working directory: {os.getcwd()}")
+st.write(f"Contents of current directory: {os.listdir()}")
 
+# Try importing modules with error handling
+modules_to_import = ['pdf2image', 'pytesseract', 'PIL']
+for module in modules_to_import:
+    try:
+        exec(f"import {module}")
+        st.write(f"Successfully imported {module}")
+        if module == 'pdf2image':
+            st.write(f"{module} version: {eval(f'{module}.__version__')}")
+    except ImportError as e:
+        st.error(f"Error importing {module}: {str(e)}")
+
+# Check for poppler
 poppler_path = shutil.which('pdfinfo')
 st.write(f"Poppler path: {poppler_path}")
 
