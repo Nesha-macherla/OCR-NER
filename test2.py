@@ -34,7 +34,7 @@ poppler_path = shutil.which('pdfinfo')
 #st.write(f"Poppler path: {poppler_path}")
 
 if poppler_path is None:
-    #st.error("poppler-utils is not installed or not in PATH")
+    st.error("poppler-utils is not installed or not in PATH")
 
 
 @st.cache_resource
