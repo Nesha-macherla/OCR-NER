@@ -1,4 +1,4 @@
-Python 3.7
+upgrade pip
 fitz==0.0.1.dev2
 pdfplumber==0.11.2
 Pillow==10.4.0
