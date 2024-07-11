@@ -26,8 +26,8 @@ for module in modules_to_import:
             #st.write(f"{module} version: {version}")
         #except pkg_resources.DistributionNotFound:
             #st.write(f"Could not determine version for {module}")
-    except ImportError as e:
-        st.error(f"Error importing {module}: {str(e)}")
+    #except ImportError as e:
+        #st.error(f"Error importing {module}: {str(e)}")
 
 # Check for poppler
 poppler_path = shutil.which('pdfinfo')
