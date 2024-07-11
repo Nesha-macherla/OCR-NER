@@ -3,6 +3,7 @@ import streamlit as st
 import spacy
 import os
 import shutil
+import pkg_resources
 
 # Debug information
 st.write(f"Python version: {sys.version}")
@@ -15,8 +16,12 @@ for module in modules_to_import:
     try:
         exec(f"import {module}")
         st.write(f"Successfully imported {module}")
-        if module == 'pdf2image':
-            st.write(f"{module} version: {eval(f'{module}.__version__')}")
+        # Get version using pkg_resources
+        try:
+            version = pkg_resources.get_distribution(module).version
+            st.write(f"{module} version: {version}")
+        except pkg_resources.DistributionNotFound:
+            st.write(f"Could not determine version for {module}")
     except ImportError as e:
         st.error(f"Error importing {module}: {str(e)}")
 
@@ -26,7 +31,42 @@ st.write(f"Poppler path: {poppler_path}")
 
 if poppler_path is None:
     st.error("poppler-utils is not installed or not in PATH")
-# Function to extract text from PDF
+
+# List all installed packages and their versions
+st.write("Installed packages:")
+installed_packages = pkg_resources.working_set
+installed_packages_list = sorted([f"{i.key} == {i.version}" for i in installed_packages])
+for package in installed_packages_list:
+    st.write(package)
+
+# Test PDF processing
+import pdf2image
+import io
+from PIL import Image
+
+def test_pdf_processing():
+    st.write("Testing PDF processing...")
+    # Create a simple PDF in memory
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.pagesizes import letter
+
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=letter)
+    c.drawString(100, 100, "Hello world!")
+    c.showPage()
+    c.save()
+
+    buffer.seek(0)
+    
+    try:
+        images = pdf2image.convert_from_bytes(buffer.getvalue())
+        st.write(f"Successfully converted PDF to {len(images)} image(s)")
+        st.image(images[0], caption="Converted PDF page", use_column_width=True)
+    except Exception as e:
+        st.error(f"Error in PDF processing: {str(e)}")
+
+test_pdf_processing()
+
 def extract_text_from_pdf(pdf_file):
     text = ""
     try:
