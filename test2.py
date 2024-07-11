@@ -36,12 +36,6 @@ st.write(f"Poppler path: {poppler_path}")
 if poppler_path is None:
     st.error("poppler-utils is not installed or not in PATH")
 
-# List all installed packages and their versions
-st.write("Installed packages:")
-installed_packages = pkg_resources.working_set
-installed_packages_list = sorted([f"{i.key} == {i.version}" for i in installed_packages])
-for package in installed_packages_list:
-    st.write(package)
 
 @st.cache_resource
 def load_spacy_model():
