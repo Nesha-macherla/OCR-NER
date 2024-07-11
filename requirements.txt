@@ -6,3 +6,4 @@ spacy
 numpy
 streamlit
 transformers
+pytorch
