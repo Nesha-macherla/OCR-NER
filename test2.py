@@ -4,6 +4,10 @@ import spacy
 import os
 import shutil
 import pkg_resources
+import pdf2image
+import pytesseract
+from PIL import Image
+import io
 
 # Debug information
 st.write(f"Python version: {sys.version}")
@@ -39,82 +43,40 @@ installed_packages_list = sorted([f"{i.key} == {i.version}" for i in installed_p
 for package in installed_packages_list:
     st.write(package)
 
-# Test PDF processing
-import pdf2image
-import io
-from PIL import Image
-
-def test_pdf_processing():
-    st.write("Testing PDF processing...")
-    # Create a simple PDF in memory
-    from reportlab.pdfgen import canvas
-    from reportlab.lib.pagesizes import letter
-
-    buffer = io.BytesIO()
-    c = canvas.Canvas(buffer, pagesize=letter)
-    c.drawString(100, 100, "Hello world!")
-    c.showPage()
-    c.save()
-
-    buffer.seek(0)
-    
-    try:
-        images = pdf2image.convert_from_bytes(buffer.getvalue())
-        st.write(f"Successfully converted PDF to {len(images)} image(s)")
-        st.image(images[0], caption="Converted PDF page", use_column_width=True)
-    except Exception as e:
-        st.error(f"Error in PDF processing: {str(e)}")
-
-test_pdf_processing()
-
-def extract_text_from_pdf(pdf_file):
-    text = ""
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            images = pdf2image.convert_from_bytes(pdf_file.read())
-            
-            for i, image in enumerate(images):
-                image_path = os.path.join(temp_dir, f'page_{i}.png')
-                image.save(image_path, 'PNG')
-                
-                text += pytesseract.image_to_string(Image.open(image_path))
-        return text
-    except Exception as e:
-        st.error(f"Error in PDF processing: {str(e)}")
-        return ""
-
-# Load the spaCy model
 @st.cache_resource
-def load_model():
-    try:
-        return spacy.load("en_core_web_sm")
-    except OSError as e:
-        st.error(f"Error loading spaCy model: {str(e)}")
-        return None
-
-nlp = load_model()
+def load_spacy_model():
+    return spacy.load("en_core_web_sm")
 
 def extract_text_from_pdf(pdf_file):
+    st.write("Extracting text from PDF...")
     text = ""
     try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            images = convert_from_bytes(pdf_file.read())
+        # Convert PDF to images
+        images = pdf2image.convert_from_bytes(pdf_file.read())
+        st.write(f"Converted PDF to {len(images)} image(s)")
+        
+        # Perform OCR on each image
+        for i, image in enumerate(images):
+            st.write(f"Processing page {i+1}")
+            # Convert PIL Image to bytes
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='PNG')
+            img_byte_arr = img_byte_arr.getvalue()
             
-            for i, image in enumerate(images):
-                image_path = os.path.join(temp_dir, f'page_{i}.png')
-                image.save(image_path, 'PNG')
-                
-                text += pytesseract.image_to_string(Image.open(image_path))
+            # Perform OCR
+            page_text = pytesseract.image_to_string(Image.open(io.BytesIO(img_byte_arr)))
+            text += page_text + "\n\n"  # Add newlines between pages
+        
         return text
     except Exception as e:
         st.error(f"Error in PDF processing: {str(e)}")
         return ""
 
 def perform_ner(text):
-    if nlp is None:
-        return []
+    nlp = load_spacy_model()
     doc = nlp(text)
-    return [(ent.text, ent.label_) for ent in doc.ents]
+    entities = [(ent.text, ent.label_) for ent in doc.ents]
+    return entities
 
 def main():
     st.title("PDF OCR and Named Entity Recognition")
@@ -130,9 +92,8 @@ def main():
             st.subheader("Extracted Text")
             st.text(extracted_text)
 
-            entities = perform_ner(extracted_text)
-
             st.subheader("Named Entities")
+            entities = perform_ner(extracted_text)
             for entity, label in entities:
                 st.write(f"{entity}: {label}")
         else:
