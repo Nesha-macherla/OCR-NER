@@ -1,3 +1,4 @@
+import sys
 import streamlit as st
 import pytesseract
 from PIL import Image
@@ -6,6 +7,7 @@ import tempfile
 import os
 from pdf2image import convert_from_bytes
 import shutil
+
 
 st.write(f"Python version: {sys.version}")
 st.write(f"spaCy version: {spacy.__version__}")
