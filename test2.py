@@ -1,18 +1,7 @@
 import streamlit as st
 import pytesseract
 import pdfplumber
-import spacy
-import subprocess
-import sys
-
-# Function to download spaCy model if not available
-def download_spacy_model(model_name):
-    try:
-        spacy.load(model_name)
-    except OSError:
-        st.warning(f"Downloading spaCy model '{model_name}'...")
-        subprocess.check_call([sys.executable, "-m", "spacy", "download", model_name])
-        st.success(f"'{model_name}' model downloaded successfully!")
+from transformers import pipeline
 
 # Function to extract text from PDF using pdfplumber
 def extract_text_from_pdf(pdf_file):
@@ -24,13 +13,11 @@ def extract_text_from_pdf(pdf_file):
                 text += page_text
     return text
 
-# Function to perform NER using spaCy
+# Function to perform NER using Hugging Face transformers
 def perform_ner(text):
-    nlp = spacy.load("en_core_web_sm")
-    doc = nlp(text)
-    entities = []
-    for ent in doc.ents:
-        entities.append((ent.text, ent.label_))
+    ner_pipeline = pipeline("ner", grouped_entities=True)
+    ner_results = ner_pipeline(text)
+    entities = [(result['word'], result['entity_group']) for result in ner_results]
     return entities
 
 # Main function to process PDF, perform OCR, and NER
@@ -58,9 +45,6 @@ def main():
         st.sidebar.header('File Details')
         file_details = {"FileName":uploaded_file.name,"FileType":uploaded_file.type}
         st.sidebar.write(file_details)
-        
-        # Check and download spaCy model if not available
-        download_spacy_model("en_core_web_sm")
         
         # Process PDF and display results
         ocr_text, entities = process_pdf(uploaded_file)
