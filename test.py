@@ -44,7 +44,7 @@ def process_pdf(pdf_file):
 
 # Streamlit app
 def main():
-    st.title("PDF Text Extraction and NER")
+    st.title("PDF OCR EXTRACTION and NER")
     
     # File upload
     uploaded_file = st.file_uploader("Upload a PDF file", type="pdf")
