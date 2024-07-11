@@ -1,28 +1,31 @@
 import streamlit as st
-import pdf2image
 import pytesseract
+from PIL import Image
 import spacy
 import tempfile
 import os
+from pdf2image import convert_from_bytes
 
 # Load the spaCy model
-nlp = spacy.load("en_core_web_sm")
+@st.cache_resource
+def load_model():
+    return spacy.load("en_core_web_sm")
+
+nlp = load_model()
 
 def extract_text_from_pdf(pdf_file):
-    # Create a temporary directory to store PDF pages as images
+    text = ""
     with tempfile.TemporaryDirectory() as temp_dir:
         # Convert PDF to images
-        images = pdf2image.convert_from_bytes(pdf_file.read())
+        images = convert_from_bytes(pdf_file.read())
         
-        # Perform OCR on each image
-        text = ""
         for i, image in enumerate(images):
             # Save the image temporarily
             image_path = os.path.join(temp_dir, f'page_{i}.png')
             image.save(image_path, 'PNG')
             
             # Perform OCR
-            text += pytesseract.image_to_string(image_path)
+            text += pytesseract.image_to_string(Image.open(image_path))
     
     return text
 
