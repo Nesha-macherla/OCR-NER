@@ -2,10 +2,10 @@ fitz
 pdfplumber
 Pillow
 pytesseract
-spacy
+spaCy
 numpy
 streamlit
 transformers
-tensorflow
+TensorFlow
 en_core_web_sm
 subprocess
